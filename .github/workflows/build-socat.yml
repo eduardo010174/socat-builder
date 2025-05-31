@@ -1,0 +1,35 @@
+name: Build socat binary
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build socat in Docker
+        run: |
+          docker build -t socat-builder -f Dockerfile .
+
+      - name: Extract socat binary from image
+        run: |
+          # Create a container from the built image
+          container_id=$(docker create socat-builder)
+          
+          # Copy the binary from container
+          docker cp "$container_id":/socat-1.7.4.4/socat ./socat
+          
+          # Cleanup
+          docker rm "$container_id"
+
+      - name: Upload socat binary as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: socat-binary
+          path: ./socat
