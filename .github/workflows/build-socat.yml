@@ -35,8 +35,10 @@ jobs:
           path: ./socat
       
       - name: Upload socat to GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
+          tag_name: latest
+          name: Socat Binary (Latest)
           files: ./socat
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
